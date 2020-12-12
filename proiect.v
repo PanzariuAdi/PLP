@@ -31,6 +31,9 @@ Inductive AExp :=
   | adiv: AExp -> AExp -> AExp
   | amod: AExp -> AExp -> AExp.
 
+Coercion anum: ErrorNat >-> AExp.
+Coercion avar: string >-> AExp. (* Var ~> string *)
+
 (* Section for BExp *)
 Inductive BExp :=
   | berror
@@ -53,21 +56,40 @@ Inductive Stmt :=
   | ifthenelse : BExp -> Stmt -> Stmt -> Stmt
   | ifthen : BExp -> Stmt -> Stmt
   | switch : AExp -> Stmt.
-  
+
+Notation "switch * A *" := (switch A) (at level 31).
+
 Inductive Vector :=
   | vector_decl : string -> Stmt -> Vector
   | vector_assign : string -> Stmt -> Vector.
 
 Inductive Define :=
   | define_nat : AExp -> string -> Define
-  | define_bool : BExp -> string -> Define
   | define_string : string -> string -> Define.
-  
+
+(*
+Notation "ndefine A B" := (define_nat A B) (at level 50).
+Notation "sdefine A B" := (define_string A B) (at level 50).
+*)
+
 Inductive FuncAExp :=
-  | amax: State -> FuncAExp
-  | amin: State -> FuncAExp
-  | apow: State -> FuncAExp.
-  
+  | amax: AExp -> AExp -> FuncAExp
+  | amin: AExp -> AExp -> FuncAExp
+  | apow: AExp -> AExp -> FuncAExp.
+
+Notation "A maxim? B" := (amax A B) (at level 60).
+Notation "A minim? B" := (amin A B) (at level 60).
+Notation "A puterea? B" := (apow A B) (at level 60).
+
+Check 1 maxim? 2.
+Check 1 minim? 2.
+Check 2 puterea? 3.
+
 Inductive BreakContinue :=
   | break : BreakContinue
   | continue : BreakContinue.
+
+Notation "Break!" := (break) (at level 50).
+Notation "Continue!" := (continue) (at level 50).
+
+Check Break!.
