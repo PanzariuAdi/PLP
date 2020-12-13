@@ -7,9 +7,6 @@ Open Scope list_scope.
 (* ErrorNat encapsulates the constructor error_nat 
    which is useful in the case of arithmetic operations like division by 0*)
 
-Inductive State :=
-| pair : nat -> nat -> State.
-
 Inductive ErrorNat :=
   | error_nat : ErrorNat
   | num : nat -> ErrorNat.
@@ -57,7 +54,8 @@ Inductive Stmt :=
   | ifthen : BExp -> Stmt -> Stmt
   | switch : AExp -> Stmt.
 
-Notation "switch * A *" := (switch A) (at level 31).
+Notation "A => switch" := (switch A) (at level 31, right associativity).
+Check 2 => switch.
 
 Inductive Vector :=
   | vector_decl : string -> Stmt -> Vector
@@ -67,10 +65,11 @@ Inductive Define :=
   | define_nat : AExp -> string -> Define
   | define_string : string -> string -> Define.
 
-(*
-Notation "ndefine A B" := (define_nat A B) (at level 50).
-Notation "sdefine A B" := (define_string A B) (at level 50).
-*)
+Notation "A #defineNat B" := (define_nat A B) (at level 50). 
+Notation "A #defineString B" := (define_string A B) (at level 50).
+
+Check 15 #defineNat "maxPoints".
+Check "a" #defineString "b".
 
 Inductive FuncAExp :=
   | amax: AExp -> AExp -> FuncAExp
