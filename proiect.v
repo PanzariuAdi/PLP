@@ -146,7 +146,8 @@ Check (SwitchNat (2) {
         Break!
         ;;
         ncase: 2 -->
-          "n1" :n= 2
+          "n1" :n= 2;;
+          "n2" :n= 3
         Break!
 }).
 
