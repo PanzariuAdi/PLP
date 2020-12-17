@@ -31,6 +31,10 @@ Inductive AExp :=
 Coercion anum: ErrorNat >-> AExp.
 Coercion avar: string >-> AExp. (* Var ~> string *)
 
+Inductive BreakContinue :=
+  | break : BreakContinue
+  | continue : BreakContinue.
+
 (* Section for BExp *)
 Inductive BExp :=
   | berror
@@ -41,18 +45,6 @@ Inductive BExp :=
   | bnot : BExp -> BExp
   | band : BExp -> BExp -> BExp
   | bor : BExp -> BExp -> BExp.
-
-(* Section for Statements *)
-Inductive Stmt :=
-  | nat_decl: string -> AExp -> Stmt
-  | bool_decl: string -> BExp -> Stmt
-  | nat_assign : string -> AExp -> Stmt
-  | bool_assign : string -> BExp -> Stmt
-  | sequence : Stmt -> Stmt -> Stmt
-  | while : BExp -> Stmt -> Stmt
-  | ifthenelse : BExp -> Stmt -> Stmt -> Stmt
-  | ifthen : BExp -> Stmt -> Stmt
-  | switch : AExp -> Stmt.
 
 Inductive LstElement :=
   | natElem: AExp -> LstElement
@@ -78,9 +70,21 @@ Inductive FuncAExp :=
   | amin: AExp -> AExp -> FuncAExp
   | apow: AExp -> AExp -> FuncAExp.
 
-Inductive BreakContinue :=
-  | break : BreakContinue
-  | continue : BreakContinue.
+
+(* Section for Statements *)
+Inductive Stmt :=
+  | nat_decl: string -> AExp -> Stmt
+  | bool_decl: string -> BExp -> Stmt
+  | nat_assign : string -> AExp -> Stmt
+  | bool_assign : string -> BExp -> Stmt
+  | sequence : Stmt -> Stmt -> Stmt
+  | while : BExp -> Stmt -> Stmt
+  | ifthenelse : BExp -> Stmt -> Stmt -> Stmt
+  | ifthen : BExp -> Stmt -> Stmt
+  | switchNatSeq : AExp -> Stmt -> BreakContinue -> Stmt
+  | switchNat : AExp -> Stmt -> Stmt
+  | switchStringSeq : string -> Stmt -> BreakContinue -> Stmt
+  | switchString : string -> Stmt -> Stmt.
 
 (*Predefined functions.*)
 Notation "'fMaxim' A ~ B" := (amax A B) (at level 60).
@@ -95,11 +99,8 @@ Notation "Continue!" := (continue) (at level 50).
 Notation "A #defineNat B" := (define_nat A B) (at level 50). 
 Notation "A #defineString B" := (define_string A B) (at level 50).
 
-(*Switch*)
-Notation "'fSwitch' A" := (switch A) (at level 30, right associativity).
-
 (*Declarations*)
-Notation "'iNat' X ::= A" := (nat_decl X A)(at level 90).
+Notation "'iNat' X ::= A" := (nat_decl X A)(at level 90). 
 Notation "'iBool' X ::= A" := (bool_decl X A)(at level 90).
 Notation "'iVector' X ::= A " := (vector_decl X A)(at level 90).
 
@@ -110,6 +111,17 @@ Notation "X :v= A" := (vector_assign X A)(at level 90).
 
 Notation "S1 ;; S2" := (sequence S1 S2) (at level 93, right associativity).
 Notation "S1 .-> S2" := (lstSequence S1 S2) (at level 93, right associativity).
+
+(*Notation for *)
+Notation "'fors' ( A ~ B ~ C ) { S }" := (A ;; while B ( S ;; C )) (at level 97).
+
+(*Switch*)
+
+Notation "'SwitchNat' ( A ) { S }" := (switchNat A S) (at level 80).
+Notation "'ncase:' A --> B C" := (switchNatSeq A B C)(at level 80).
+
+Notation "'SwitchString' ( A ) { S }" := (switchString A S) (at level 80).
+Notation "'scase:' A B C" := (switchStringSeq A B C)(at level 80).
 
 (* Notations used for arithmetic operations *)
 Notation "A +' B" := (aplus A B)(at level 50, left associativity).
@@ -126,10 +138,23 @@ Notation "A ||' B" := (bor A B)(at level 53, left associativity).
 
 Check iVector "fullName" ::= ("Panzariu" .-> "Ionut" .-> "Adrian").
 Check iVector "numbers" ::= (1 .-> 2 .-> 3 .-> 4 .-> 5).
+Check iNat "a" ::= 5.
+
+Check (SwitchNat (2) { 
+        ncase: 1 -->
+          "n1" :n= 1
+        Break!
+        ;;
+        ncase: 2 -->
+          "n1" :n= 2
+        Break!
+}).
+
+Check "b" :b= btrue.
+Check "numbers" :v= ("10" .-> "9" .-> "8").
 Check fMaxim 1 ~ 2.
 Check fMinim 1 ~ 2.
 Check fPow 1 ~ 2.
-Check fSwitch 2.
 Check 15 #defineNat "maxPoints".
 Check "a" #defineString "b".
 Check Break!.
