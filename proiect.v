@@ -111,8 +111,21 @@ Notation "X :v= A" := (vector_assign X A)(at level 90).
 Notation "S1 ;; S2" := (sequence S1 S2) (at level 93, right associativity).
 Notation "S1 .-> S2" := (lstSequence S1 S2) (at level 93, right associativity).
 
+(* Notations used for arithmetic operations *)
+Notation "A +' B" := (aplus A B)(at level 50, left associativity).
+Notation "A -' B" := (asub A B)(at level 50, left associativity).
+Notation "A *' B" := (amul A B)(at level 48, left associativity).
+Notation "A /' B" := (adiv A B)(at level 48, left associativity).
+Notation "A %' B" := (amod A B)(at level 45, left associativity)  .
+
+(* Notations used for boolean operations *)
+Notation "A <' B" := (blt A B) (at level 70).
+Notation "!' A" := (bnot A)(at level 51, left associativity).
+Notation "A &&' B" := (band A B)(at level 52, left associativity).
+Notation "A ||' B" := (bor A B)(at level 53, left associativity).
+
 Check iVector "fullName" ::= ("Panzariu" .-> "Ionut" .-> "Adrian").
-Check iVector "numbers" ::= (1 .-> 2 .-> 3).
+Check iVector "numbers" ::= (1 .-> 2 .-> 3 .-> 4 .-> 5).
 Check fMaxim 1 ~ 2.
 Check fMinim 1 ~ 2.
 Check fPow 1 ~ 2.
